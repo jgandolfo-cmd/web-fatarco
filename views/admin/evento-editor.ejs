@@ -1,0 +1,49 @@
+<%- include('../partials/admin-header') %>
+
+<% if (error) { %><div class="alert alert--error"><%= error %></div><% } %>
+
+<form method="POST" action="/admin/eventos/nuevo" class="editor-form editor-form--simple">
+  <div class="form-group">
+    <label>Título del evento *</label>
+    <input type="text" name="titulo" required value="<%= evento ? evento.titulo : '' %>" class="input-large">
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label>Tipo</label>
+      <select name="tipo" class="input-select">
+        <% ['AL', 'C', 'S', '3D'].forEach(t => { %>
+        <option value="<%= t %>" <%= (evento && evento.tipo === t) ? 'selected' : '' %>><%= t %> - <%= t === 'AL' ? 'Aire Libre' : t === 'C' ? 'Campo' : t === 'S' ? 'Sala' : '3D' %></option>
+        <% }) %>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Fecha inicio *</label>
+      <input type="date" name="fecha_inicio" required value="<%= evento ? evento.fecha_inicio : '' %>">
+    </div>
+    <div class="form-group">
+      <label>Fecha fin</label>
+      <input type="date" name="fecha_fin" value="<%= evento ? evento.fecha_fin || '' : '' %>">
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label>Sede</label>
+      <input type="text" name="sede" value="<%= evento ? evento.sede || '' : '' %>">
+    </div>
+    <div class="form-group">
+      <label>Localidad</label>
+      <input type="text" name="localidad" value="<%= evento ? evento.localidad || '' : '' %>">
+    </div>
+    <div class="form-group">
+      <label>Provincia</label>
+      <input type="text" name="provincia" value="<%= evento ? evento.provincia || '' : '' %>">
+    </div>
+  </div>
+  <div class="form-group">
+    <label>Descripción</label>
+    <textarea name="descripcion" rows="3" class="input-textarea"><%= evento ? evento.descripcion || '' : '' %></textarea>
+  </div>
+  <button type="submit" class="btn-admin btn-admin--primary">💾 Guardar Evento</button>
+</form>
+
+<%- include('../partials/admin-footer') %>

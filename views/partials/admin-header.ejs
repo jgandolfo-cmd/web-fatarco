@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin-body">
+  <aside class="admin-sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-logo">🏹</span>
+      <span class="sidebar-title">FATARCO</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/admin" class="sidebar-link">📊 Dashboard</a>
+      <a href="/admin/noticias" class="sidebar-link">📰 Noticias</a>
+      <a href="/admin/eventos" class="sidebar-link">📅 Eventos</a>
+      <hr class="sidebar-sep">
+      <a href="/" class="sidebar-link" target="_blank">🌐 Ver sitio</a>
+      <a href="/admin/logout" class="sidebar-link sidebar-link--danger">🚪 Cerrar sesión</a>
+    </nav>
+    <div class="sidebar-user">
+      <span>👤 <%= user.nombre %></span>
+      <small><%= user.rol %></small>
+    </div>
+  </aside>
+  <main class="admin-main">
+    <header class="admin-topbar">
+      <h1 class="admin-page-title"><%= title.replace(' - FATARCO', '') %></h1>
+      <span class="admin-user-label">Hola, <%= user.nombre %></span>
+    </header>
+    <div class="admin-content">

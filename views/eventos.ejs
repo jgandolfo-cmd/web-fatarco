@@ -1,0 +1,31 @@
+<%- include('partials/header') %>
+<section class="page-header"><div class="container"><h1 class="page-title">Calendario de Eventos</h1><p style="color:rgba(255,255,255,0.65);margin-top:0.4rem">Competencias, torneos y actividades de la federación</p></div></section>
+<section class="section">
+  <div class="container">
+    <div class="eventos-list" role="list">
+      <% eventos.forEach(ev => { 
+        const fecha = new Date(ev.fecha_inicio + 'T12:00:00');
+        const dia = fecha.getDate().toString().padStart(2, '0');
+        const mes = fecha.toLocaleDateString('es-AR', { month: 'short' }).toUpperCase().replace('.','');
+        const fechaFin = ev.fecha_fin ? new Date(ev.fecha_fin + 'T12:00:00') : null;
+      %>
+      <div class="evento-row evento-row--full" role="listitem">
+        <div class="evento-fecha">
+          <span class="evento-dia"><%= dia %></span>
+          <span class="evento-mes"><%= mes %></span>
+          <% if (fechaFin && fechaFin.getTime() !== fecha.getTime()) { %><span class="evento-rango">al <%= fechaFin.getDate() %></span><% } %>
+        </div>
+        <div class="evento-tipo tipo-<%= ev.tipo.toLowerCase() %>" aria-label="Modalidad <%= ev.tipo %>"><%= ev.tipo %></div>
+        <div class="evento-info">
+          <h4 class="evento-titulo"><%= ev.titulo %></h4>
+          <span class="evento-lugar"><%= ev.sede ? ev.sede + ' — ' : '' %><%= ev.localidad %><% if (ev.provincia) { %>, <%= ev.provincia %><% } %></span>
+          <% if (ev.descripcion) { %><p class="evento-desc"><%= ev.descripcion %></p><% } %>
+        </div>
+        <div class="evento-arrow" aria-hidden="true">→</div>
+      </div>
+      <% }) %>
+      <% if (eventos.length === 0) { %><div class="empty-state"><p>No hay eventos programados por el momento.</p></div><% } %>
+    </div>
+  </div>
+</section>
+<%- include('partials/footer') %>

@@ -1,0 +1,45 @@
+<%- include('partials/header') %>
+
+<section class="page-header">
+  <div class="container">
+    <h1 class="page-title">Noticias</h1>
+    <div class="cat-filters">
+      <a href="/noticias" class="cat-btn <%= !categoria ? 'active' : '' %>">Todas</a>
+      <% categorias.forEach(c => { %>
+      <a href="/noticias?categoria=<%= encodeURIComponent(c) %>" class="cat-btn <%= categoria === c ? 'active' : '' %>"><%= c %></a>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="noticias-grid">
+      <% noticias.forEach(n => { %>
+      <article class="card">
+        <% if (n.imagen) { %>
+        <div class="card__img" style="background-image: url('<%= n.imagen %>')" role="img" aria-label="<%= n.titulo %>"></div>
+        <% } else { %>
+        <div class="card__img card__img--placeholder" role="img" aria-label="<%= n.titulo %>"></div>
+        <% } %>
+        <div class="card__body">
+          <span class="card__cat"><%= n.categoria %></span>
+          <h3 class="card__title"><a href="/noticia/<%= n.slug %>"><%= n.titulo %></a></h3>
+          <p class="card__excerpt"><%= n.extracto %></p>
+          <time class="card__date" datetime="<%= n.created_at %>"><%= new Date(n.created_at).toLocaleDateString('es-AR', { day: 'numeric', month: 'long', year: 'numeric' }) %></time>
+        </div>
+      </article>
+      <% }) %>
+    </div>
+    <% if (totalPages > 1) { %>
+    <nav class="pagination" aria-label="Paginación de noticias">
+      <% if (page > 1) { %><a href="/noticias?page=<%= page - 1 %><%= categoria ? '&categoria=' + encodeURIComponent(categoria) : '' %>" class="page-btn">← Anterior</a><% } %>
+      <span class="page-info">Página <%= page %> de <%= totalPages %></span>
+      <% if (page < totalPages) { %><a href="/noticias?page=<%= page + 1 %><%= categoria ? '&categoria=' + encodeURIComponent(categoria) : '' %>" class="page-btn">Siguiente →</a><% } %>
+    </nav>
+    <% } %>
+    <% if (noticias.length === 0) { %><div class="empty-state"><p>No hay noticias en esta categoría por el momento.</p></div><% } %>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

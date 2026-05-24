@@ -1,0 +1,61 @@
+<%- include('../partials/admin-header') %>
+
+<% if (mensaje) { %>
+<div class="alert alert--success"><%= mensaje %></div>
+<% } %>
+
+<div class="admin-section">
+  <div class="admin-section-header">
+    <h2>Todas las Noticias</h2>
+    <a href="/admin/noticias/nueva" class="btn-admin btn-admin--primary">+ Nueva Noticia</a>
+  </div>
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>Título</th>
+        <th>Categoría</th>
+        <th>Estado</th>
+        <th>Destacada</th>
+        <th>Vistas</th>
+        <th>Fecha</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% noticias.forEach(n => { %>
+      <tr>
+        <td><strong><%= n.titulo %></strong></td>
+        <td><%= n.categoria %></td>
+        <td>
+          <span class="badge badge--<%= n.publicada ? 'green' : 'gray' %>" 
+                style="cursor:pointer" 
+                onclick="togglePublicada(<%= n.id %>)">
+            <%= n.publicada ? 'Publicada' : 'Borrador' %>
+          </span>
+        </td>
+        <td>
+          <% if (n.destacada) { %>
+          <span class="badge badge--orange">⭐ Sí</span>
+          <% } else { %>
+          <button class="btn-admin btn-admin--tiny" onclick="toggleDestacada(<%= n.id %>)">Destacar</button>
+          <% } %>
+        </td>
+        <td><%= n.views %></td>
+        <td><%= new Date(n.created_at).toLocaleDateString('es-AR') %></td>
+        <td class="actions-cell">
+          <a href="/admin/noticias/editar/<%= n.id %>" class="btn-admin btn-admin--small">Editar</a>
+          <form method="POST" action="/admin/noticias/eliminar/<%= n.id %>" style="display:inline" 
+                onsubmit="return confirm('¿Seguro que querés eliminar esta noticia?')">
+            <button type="submit" class="btn-admin btn-admin--small btn-admin--danger">Eliminar</button>
+          </form>
+        </td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <% if (noticias.length === 0) { %>
+  <p style="text-align:center; padding: 2rem; color: #888;">No hay noticias todavía. ¡Creá la primera!</p>
+  <% } %>
+</div>
+
+<%- include('../partials/admin-footer') %>

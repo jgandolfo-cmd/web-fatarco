@@ -1,0 +1,25 @@
+<%- include('partials/header') %>
+<section class="page-header"><div class="container"><h1 class="page-title">Clubes Afiliados</h1><p style="color:rgba(255,255,255,0.65);margin-top:0.4rem">Encontrá un lugar para tirar en todo el país</p></div></section>
+<section class="section">
+  <div class="container">
+    <% if (clubes.length > 0) { %>
+    <div class="clubes-grid">
+      <% clubes.forEach(c => { %>
+      <div class="club-card">
+        <% if (c.logo) { %><img src="<%= c.logo %>" alt="<%= c.nombre %>" class="club-logo"><% } %>
+        <h3><%= c.nombre %></h3>
+        <p><%= c.localidad %><% if(c.provincia){ %>, <%= c.provincia %><% } %></p>
+        <% if(c.email){ %><a href="mailto:<%= c.email %>" style="font-size:0.88rem"><%= c.email %></a><% } %>
+      </div>
+      <% }) %>
+    </div>
+    <% } else { %>
+    <div class="gov-card" style="text-align:center">
+      <h3>Próximamente</h3>
+      <p>Estamos actualizando el listado completo de clubes afiliados en todo el país. Mientras tanto, podés escribirnos a <a href="mailto:info@fatarco.org.ar">info@fatarco.org.ar</a> para que te conectemos con el club más cercano a tu ubicación.</p>
+      <a href="/contacto" class="btn btn-primary" style="margin-top:1rem">Contactanos</a>
+    </div>
+    <% } %>
+  </div>
+</section>
+<%- include('partials/footer') %>

@@ -1,0 +1,43 @@
+<%- include('partials/header') %>
+
+<article class="noticia-detalle">
+  <% if (noticia.imagen) { %>
+  <div class="noticia-hero" style="background-image: url('<%= noticia.imagen %>')" role="img" aria-label="<%= noticia.titulo %>">
+    <div class="noticia-hero__overlay"></div>
+  </div>
+  <% } %>
+  <div class="container">
+    <div class="noticia-content">
+      <div class="noticia-meta">
+        <span class="card__cat"><%= noticia.categoria %></span>
+        <time datetime="<%= noticia.created_at %>"><%= new Date(noticia.created_at).toLocaleDateString('es-AR', { day: 'numeric', month: 'long', year: 'numeric' }) %></time>
+        <span><%= noticia.views %> lecturas</span>
+      </div>
+      <h1 class="noticia-titulo"><%= noticia.titulo %></h1>
+      <div class="noticia-body"><%- noticia.contenido %></div>
+      <div class="share-bar">
+        <span>Compartir:</span>
+        <a href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent('https://waargentina.com.ar/noticia/' + noticia.slug) %>" target="_blank" rel="noopener" class="share-btn">Facebook</a>
+        <a href="https://api.whatsapp.com/send?text=<%= encodeURIComponent(noticia.titulo + ' https://waargentina.com.ar/noticia/' + noticia.slug) %>" target="_blank" rel="noopener" class="share-btn share-btn--wa">WhatsApp</a>
+      </div>
+    </div>
+    <% if (relacionadas.length > 0) { %>
+    <div class="relacionadas" style="max-width:760px;margin:0 auto">
+      <h3>Noticias relacionadas</h3>
+      <div class="noticias-grid--small" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:1rem">
+        <% relacionadas.forEach(r => { %>
+        <article class="card">
+          <div class="card__body">
+            <span class="card__cat"><%= r.categoria %></span>
+            <h4 class="card__title"><a href="/noticia/<%= r.slug %>"><%= r.titulo %></a></h4>
+            <time class="card__date"><%= new Date(r.created_at).toLocaleDateString('es-AR', { day: 'numeric', month: 'long' }) %></time>
+          </div>
+        </article>
+        <% }) %>
+      </div>
+    </div>
+    <% } %>
+  </div>
+</article>
+
+<%- include('partials/footer') %>

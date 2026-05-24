@@ -1,0 +1,53 @@
+<%- include('../partials/admin-header') %>
+
+<div class="stats-grid">
+  <div class="stat-card stat-card--blue">
+    <span class="stat-number"><%= stats.noticias %></span>
+    <span class="stat-label">Noticias</span>
+  </div>
+  <div class="stat-card stat-card--green">
+    <span class="stat-number"><%= stats.eventos %></span>
+    <span class="stat-label">Eventos Activos</span>
+  </div>
+  <div class="stat-card stat-card--orange">
+    <span class="stat-number"><%= stats.clubes %></span>
+    <span class="stat-label">Clubes</span>
+  </div>
+  <div class="stat-card stat-card--red">
+    <span class="stat-number"><%= stats.visitas %></span>
+    <span class="stat-label">Lecturas Totales</span>
+  </div>
+</div>
+
+<div class="admin-section">
+  <div class="admin-section-header">
+    <h2>Últimas Noticias</h2>
+    <a href="/admin/noticias/nueva" class="btn-admin btn-admin--primary">+ Nueva Noticia</a>
+  </div>
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>Título</th>
+        <th>Estado</th>
+        <th>Vistas</th>
+        <th>Fecha</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% ultimasNoticias.forEach(n => { %>
+      <tr>
+        <td><strong><%= n.titulo %></strong></td>
+        <td><span class="badge badge--<%= n.publicada ? 'green' : 'gray' %>"><%= n.publicada ? 'Publicada' : 'Borrador' %></span></td>
+        <td><%= n.views %></td>
+        <td><%= new Date(n.created_at).toLocaleDateString('es-AR') %></td>
+        <td>
+          <a href="/admin/noticias/editar/<%= n.id %>" class="btn-admin btn-admin--small">Editar</a>
+        </td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<%- include('../partials/admin-footer') %>

@@ -1,0 +1,34 @@
+<%- include('../partials/admin-header') %>
+
+<% if (mensaje) { %>
+<div class="alert alert--success"><%= mensaje %></div>
+<% } %>
+
+<div class="admin-section">
+  <div class="admin-section-header">
+    <h2>Eventos</h2>
+    <a href="/admin/eventos/nuevo" class="btn-admin btn-admin--primary">+ Nuevo Evento</a>
+  </div>
+  <table class="admin-table">
+    <thead>
+      <tr><th>Fecha</th><th>Tipo</th><th>Título</th><th>Lugar</th><th>Acciones</th></tr>
+    </thead>
+    <tbody>
+      <% eventos.forEach(ev => { %>
+      <tr>
+        <td><%= ev.fecha_inicio %></td>
+        <td><span class="badge tipo-<%= ev.tipo.toLowerCase() %>"><%= ev.tipo %></span></td>
+        <td><strong><%= ev.titulo %></strong></td>
+        <td><%= ev.localidad %>, <%= ev.provincia %></td>
+        <td>
+          <form method="POST" action="/admin/eventos/eliminar/<%= ev.id %>" style="display:inline" onsubmit="return confirm('¿Eliminar evento?')">
+            <button type="submit" class="btn-admin btn-admin--small btn-admin--danger">Eliminar</button>
+          </form>
+        </td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<%- include('../partials/admin-footer') %>

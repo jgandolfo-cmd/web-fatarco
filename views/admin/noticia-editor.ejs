@@ -1,0 +1,176 @@
+<%- include('../partials/admin-header') %>
+
+<% if (error) { %>
+<div class="alert alert--error"><%= error %></div>
+<% } %>
+
+<form method="POST" 
+      action="/admin/noticias/<%= noticia && noticia.id ? 'editar/' + noticia.id : 'nueva' %>" 
+      enctype="multipart/form-data" 
+      id="noticiaForm"
+      class="editor-form">
+  
+  <div class="editor-main">
+    <!-- Título -->
+    <div class="form-group">
+      <label for="titulo">Título de la noticia *</label>
+      <input type="text" id="titulo" name="titulo" required 
+             value="<%= noticia ? noticia.titulo : '' %>" 
+             placeholder="Escribí un título atractivo..."
+             class="input-large">
+    </div>
+
+    <!-- Extracto -->
+    <div class="form-group">
+      <label for="extracto">Extracto / Resumen</label>
+      <textarea id="extracto" name="extracto" rows="3" 
+                placeholder="Breve resumen que aparecerá en las tarjetas de noticias..."
+                class="input-textarea"><%= noticia ? noticia.extracto || '' : '' %></textarea>
+    </div>
+
+    <!-- Editor Quill -->
+    <div class="form-group">
+      <label>Contenido de la noticia *</label>
+      <div id="quill-editor" class="quill-container"></div>
+      <input type="hidden" id="contenido" name="contenido">
+    </div>
+  </div>
+
+  <div class="editor-sidebar">
+    <!-- Publicar -->
+    <div class="sidebar-panel">
+      <h3>Publicación</h3>
+      <div class="form-group">
+        <label class="checkbox-label">
+          <input type="checkbox" name="publicada" value="1" 
+                 <%= (!noticia || noticia.publicada) ? 'checked' : '' %>>
+          Publicar inmediatamente
+        </label>
+      </div>
+      <div class="form-group">
+        <label class="checkbox-label">
+          <input type="checkbox" name="destacada" value="1" 
+                 <%= (noticia && noticia.destacada) ? 'checked' : '' %>>
+          Noticia destacada (hero)
+        </label>
+      </div>
+      <button type="submit" class="btn-admin btn-admin--primary btn-admin--block">
+        💾 <%= noticia && noticia.id ? 'Actualizar' : 'Publicar' %> Noticia
+      </button>
+    </div>
+
+    <!-- Categoría -->
+    <div class="sidebar-panel">
+      <h3>Categoría</h3>
+      <div class="form-group">
+        <select name="categoria" class="input-select">
+          <% ['Noticias', 'Actualidad', 'Clubes', 'Competencias', 'Selección', 'Institucional'].forEach(c => { %>
+          <option value="<%= c %>" <%= (noticia && noticia.categoria === c) ? 'selected' : '' %>><%= c %></option>
+          <% }) %>
+        </select>
+      </div>
+    </div>
+
+    <!-- Imagen -->
+    <div class="sidebar-panel">
+      <h3>Imagen principal</h3>
+      <% if (noticia && noticia.imagen) { %>
+      <div class="current-image">
+        <img src="<%= noticia.imagen %>" alt="Imagen actual">
+        <small>Imagen actual</small>
+      </div>
+      <% } %>
+      <div class="form-group">
+        <input type="file" name="imagen" accept="image/*" id="imagenInput" class="input-file">
+        <label for="imagenInput" class="file-label">📷 Seleccionar imagen</label>
+        <div id="imagenPreview" class="image-preview"></div>
+      </div>
+      <small class="help-text">JPG, PNG o WebP. Máx. 5MB.</small>
+    </div>
+  </div>
+</form>
+
+<script>
+  // Inicializar Quill
+  const quill = new Quill('#quill-editor', {
+    theme: 'snow',
+    placeholder: 'Escribí el contenido de la noticia acá...',
+    modules: {
+      toolbar: {
+        container: [
+          [{ 'header': [2, 3, 4, false] }],
+          ['bold', 'italic', 'underline', 'strike'],
+          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+          ['blockquote'],
+          ['link', 'image'],
+          [{ 'align': [] }],
+          ['clean']
+        ],
+        handlers: {
+          image: imageHandler
+        }
+      }
+    }
+  });
+
+  // Cargar contenido existente
+  <% if (noticia && noticia.contenido) { %>
+  quill.root.innerHTML = <%- JSON.stringify(noticia.contenido) %>;
+  <% } %>
+
+  // Subir imagen desde el editor
+  function imageHandler() {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click();
+
+    input.onchange = async () => {
+      const file = input.files[0];
+      if (!file) return;
+      
+      const formData = new FormData();
+      formData.append('imagen', file);
+      
+      try {
+        const res = await fetch('/api/upload-imagen', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        if (data.url) {
+          const range = quill.getSelection(true);
+          quill.insertEmbed(range.index, 'image', data.url);
+        }
+      } catch (err) {
+        alert('Error al subir la imagen');
+      }
+    };
+  }
+
+  // Antes de enviar, pasar el HTML de Quill al hidden input
+  document.getElementById('noticiaForm').addEventListener('submit', function(e) {
+    const contenido = quill.root.innerHTML;
+    if (!contenido || contenido === '<p><br></p>') {
+      e.preventDefault();
+      alert('El contenido de la noticia no puede estar vacío');
+      return;
+    }
+    document.getElementById('contenido').value = contenido;
+  });
+
+  // Preview de imagen
+  document.getElementById('imagenInput').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        document.getElementById('imagenPreview').innerHTML = 
+          '<img src="' + ev.target.result + '" alt="Preview">';
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+</script>
+
+<%- include('../partials/admin-footer') %>
